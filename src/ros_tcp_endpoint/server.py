@@ -159,6 +159,15 @@ class SysCommands:
         self.tcp_server.subscribers_table[topic] = new_subscriber
 
         self.tcp_server.loginfo("RegisterSubscriber({}, {}) OK".format(topic, message_class))
+        
+    def remove_subscriber(self, topic):
+        if topic in self.tcp_server.subscribers_table:
+            old_subscriber = self.tcp_server.subscribers_table.get(topic)
+            self.tcp_server.unregister_node(old_subscriber)
+            del self.tcp_server.subscribers_table[topic]
+            self.tcp_server.loginfo("Removed subscriber for topic {}".format(topic))
+        else:
+            self.tcp_server.logwarn("Attempted to remove non-existent subscriber for topic {}".format(topic))
 
     def publish(self, topic, message_name, queue_size=10, latch=False):
         if topic == "":
